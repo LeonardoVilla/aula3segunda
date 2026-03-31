@@ -10,28 +10,66 @@ import { useState }  from "react";
 
 import Toast from 'react-native-toast-message';
 
+import { Alert } from 'react-native'
+import { supabase } from '@/lib/supabase'
+
 export default function Login(){
 
     const [usuario, setUsuario] = useState("");
     const [senha, setSenha] = useState("");
+    const [loading, setLoading] = useState(false)
 
-    const validaLogin = () =>{
-      if(usuario == "admin" && senha == "admin"){
-        alert("Login efetuado com sucesso")
-        Toast.show({
-            type: 'success',
-            text1: 'Sucesso!',
-            text2: 'Login efetuado com sucesso!'
-        })
-      }else{
-        alert("Usuáro ou senha inválidos")
+    // const validaLogin = () =>{
+    //   if(usuario == "admin" && senha == "admin"){
+    //     alert("Login efetuado com sucesso")
+    //     Toast.show({
+    //         type: 'success',
+    //         text1: 'Sucesso!',
+    //         text2: 'Login efetuado com sucesso!'
+    //     })
+    //   }else{
+    //     alert("Usuáro ou senha inválidos")
+    //     Toast.show({
+    //         type: 'error',
+    //         text1: 'Erro!',
+    //         text2: 'Usuário ou senha inválidos'
+    //     })
+    //     //npm install react-native-toast-messsage
+    //   } 
+    // }
+
+    async function validaLogin() {
+    setLoading(true)
+    const { error } = await supabase.auth.signInWithPassword({
+      email: usuario,
+      password: senha,
+    })
+    if (error){
         Toast.show({
             type: 'error',
             text1: 'Erro!',
             text2: 'Usuário ou senha inválidos'
         })
-        //npm install react-native-toast-messsage
-      } 
+        setLoading(false)
+    }else{
+        Toast.show({
+            type: 'success',
+            text1: 'Sucesso!',
+            text2: 'Login efetuado com sucesso!'
+        })
+    }
+    async function signUpWithEmail() {
+        setLoading(true)
+        const {
+        data: { session },
+        error,
+        } = await supabase.auth.signUp({
+        email: usuario,
+        password: senha,
+        })
+        if (error) Alert.alert(error.message)
+        if (!session) Alert.alert('Please check your inbox for email verification!')
+        setLoading(false)
     }
 
     return(
@@ -50,7 +88,7 @@ export default function Login(){
                 onChangeText={setSenha}
                 secureTextEntry
             />
-            <TouchableOpacity style={styles.button} onPress={validaLogin}>
+            <TouchableOpacity style={[styles.button, loading && styles.buttonDisabled]} onPress={validaLogin}>
                 <Text style={styles.title}>Login</Text>
             </TouchableOpacity>
             <Toast />
@@ -94,6 +132,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingTop: 20,
     
+    },
+    buttonDisabled:{
+        backgroundColor: 'gray',
     }
 })
 
