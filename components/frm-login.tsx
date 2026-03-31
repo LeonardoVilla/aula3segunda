@@ -36,6 +36,8 @@ export default function Login(){
 
     return(
         <View style={styles.container}>
+            <Text style={styles.aula}>Aula Segunda</Text>
+            <Text style={styles.aula}>Temos que Finalizar</Text>
             <Text style={styles.title}>Área Restrita</Text>
             <TextInput 
                 style={styles.input}
@@ -68,6 +70,13 @@ const styles = StyleSheet.create({
         fontSize: 24,
         marginBottom: 20,
         color:'#ffffff'
+    },
+    aula:{
+        fontFamily:'arial',
+        fontSize: 34,
+        marginBottom: 20,
+        color:'#ffffff',
+        fontWeight: 'bold',
     },
     input:{
         width: '90%',
