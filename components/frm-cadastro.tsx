@@ -16,50 +16,59 @@ import { supabase } from '@/lib/supabase'
 import { router } from 'expo-router';
 //router.replace('/home');
 
-export default function Login() {
+export default function Cadastro() {
 
-    const [usuario, setUsuario] = useState("");
-    const [senha, setSenha] = useState("");
-    const [loading, setLoading] = useState(false)
+    const [nome, setNome] = useState("");
+    const [idade, setIdade] = useState("");
+    const [email, setEmail] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    async function validaLogin() {
+    async function cadastroAluno() {
         setLoading(true)
-        ///////////////////////////////
-        const { error } = await supabase.auth.signInWithPassword({
-            email: usuario,
-            password: senha,
-        })
-        ///////////////////////////////////
+        const { data, error } = await supabase
+            .from('alunos')
+            .insert([
+                { nome: nome, idade: idade, email:email },
+            ])
+            .select()
         if (error) {
             Toast.show({
                 type: 'error',
                 text1: 'Erro!',
-                text2: 'Usuário ou senha inválidos'
+                text2: 'Cadastro não realizado' + error.message
             })
             setLoading(false)
         } else {
-            router.replace('/(tabs)');
+           Toast.show({
+                type: 'success',
+                text1: 'Sucesso!',
+                text2: 'Cadastro Realizado'
+            })
         }
     }
 
     return (
         <View style={styles.container}>
-            <Text style={styles.aula}>Aula Segunda</Text>
-            <Text style={styles.aula}>Temos que Finalizar</Text>
-            <Text style={styles.title}>Área Restrita</Text>
+            <Text style={styles.aula}>Cadastro de Aluno</Text>
             <TextInput
                 style={styles.input}
-                value={usuario}
-                onChangeText={setUsuario}
+                value={nome}
+                onChangeText={setNome}
             />
+
             <TextInput
                 style={styles.input}
-                value={senha}
-                onChangeText={setSenha}
-                secureTextEntry
+                value={idade}
+                onChangeText={setIdade}
             />
-            <TouchableOpacity style={[styles.button, loading && styles.buttonDisabled]} onPress={validaLogin}>
-                <Text style={styles.title}>Login</Text>
+
+            <TextInput
+                style={styles.input}
+                value={email}
+                onChangeText={setEmail}
+            />
+            <TouchableOpacity style={[styles.button, loading && styles.buttonDisabled]} onPress={cadastroAluno}>
+                <Text style={styles.title}>Cadastrar</Text>
             </TouchableOpacity>
             <Toast />
         </View>
