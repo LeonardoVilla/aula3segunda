@@ -1,10 +1,9 @@
 import { supabase } from "@/lib/supabase";
 import { useEffect, useState } from "react";
 import { useIsFocused } from "@react-navigation/native";
-
-import { FlatList, StyleSheet, Text, View } from "react-native";
-
+import { FlatList, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import Toast from "react-native-toast-message";
+import { router } from "expo-router";
 
 interface Aluno{
     id: number;
@@ -15,7 +14,6 @@ interface Aluno{
 
 export default function Consultar(){
     const [alunos, setAlunos] = useState<Aluno[]>([]);
-
     const isFocused = useIsFocused();
 
     useEffect(() =>{
@@ -25,7 +23,7 @@ export default function Consultar(){
     },[isFocused]);
 
     async function getAlunos(){
-        let { data, error } = await supabase
+        let { data: alunos, error } = await supabase
             .from("alunos")
             .select("*")
             .order("nome", { ascending: true });
@@ -37,20 +35,35 @@ export default function Consultar(){
                 text2: "Erro ao consultar dados!"
             })
         }else{
-            setAlunos(data as Aluno[]);
+            setAlunos(alunos as Aluno[]);
         }
     }
 
     return(
-        <View>
+        <View style={styles.container}>
             <FlatList
                 data={alunos}
                 keyExtractor={(item: Aluno) => item.id.toString()}
+                renderItem={({ item }) => (
+                    <View>
+                        <Text>{item.nome}</Text>
+                        <Text>{item.idade}</Text>
+                        <Text>{item.email}</Text>
+                        <TouchableOpacity onPress={() => router.push('/(tabs)/alterar')}>
+                            <Text>Alterar</Text>
+                        </TouchableOpacity>
+                        <Text>Deletar</Text>
+                    </View>
+                )}
             />
         </View>
     )
-
-
-
 }
 
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#fff",
+        color: "#000",
+    }
+})
