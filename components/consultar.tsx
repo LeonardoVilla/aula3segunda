@@ -39,6 +39,15 @@ export default function Consultar(){
         }
     }
 
+    function deleteAluno(){
+
+        Toast.show({
+                type: "success",
+                text1: "Sucesso",
+                text2: "Aluno deletado com sucesso!"
+            })
+    }
+
     return(
         <View style={styles.container}>
             <FlatList
@@ -52,10 +61,13 @@ export default function Consultar(){
                         <TouchableOpacity onPress={() => router.push('/(tabs)/alterar')}>
                             <Text>Alterar</Text>
                         </TouchableOpacity>
-                        <Text>Deletar</Text>
+                        <TouchableOpacity onPress={() => deleteAluno()}>
+                            <Text>Deletar</Text>
+                        </TouchableOpacity>
                     </View>
                 )}
             />
+            <Toast />
         </View>
     )
 }
