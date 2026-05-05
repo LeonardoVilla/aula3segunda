@@ -38,6 +38,7 @@ export default function Login() {
             })
             setLoading(false)
         } else {
+
             router.replace('/(tabs)');
         }
     }
