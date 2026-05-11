@@ -24,7 +24,7 @@ export default function Consultar(){
 
     async function getAlunos(){
         let { data: alunos, error } = await supabase
-            .from("alunos")
+            .from("tb_alunos")
             .select("*")
             .order("nome", { ascending: true });
         
@@ -39,13 +39,24 @@ export default function Consultar(){
         }
     }
 
-    function deleteAluno(){
-
-        Toast.show({
+    async function deleteAluno(id: number){
+        let { error } = await supabase
+            .from("tb_alunos")
+            .delete().eq("id", id);
+        if(!error){
+            Toast.show({
                 type: "success",
                 text1: "Sucesso",
                 text2: "Aluno deletado com sucesso!"
             })
+        }else{
+            Toast.show({
+                type: "error",
+                text1: "Erro",
+                text2: "Aluno não foi excluido!"
+            })   
+        }
+        getAlunos();
     }
 
     return(
@@ -61,7 +72,7 @@ export default function Consultar(){
                         <TouchableOpacity onPress={() => router.push('/(tabs)/alterar')}>
                             <Text>Alterar</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => deleteAluno()}>
+                        <TouchableOpacity onPress={() => deleteAluno(item.id)}>
                             <Text>Deletar</Text>
                         </TouchableOpacity>
                     </View>
