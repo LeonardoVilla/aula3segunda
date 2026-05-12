@@ -59,6 +59,10 @@ export default function Consultar(){
         getAlunos();
     }
 
+    async function upateAluno(id: number){
+        router.push({pathname:'/(tabs)/alterar', params: { id }});
+    }
+
     return(
         <View style={styles.container}>
             <FlatList
@@ -69,7 +73,7 @@ export default function Consultar(){
                         <Text>{item.nome}</Text>
                         <Text>{item.idade}</Text>
                         <Text>{item.email}</Text>
-                        <TouchableOpacity onPress={() => router.push('/(tabs)/alterar')}>
+                        <TouchableOpacity onPress={() => upateAluno(item.id)}>
                             <Text>Alterar</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => deleteAluno(item.id)}>
