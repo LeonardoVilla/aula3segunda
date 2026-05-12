@@ -1,19 +1,18 @@
 import {
-    View,
+    StyleSheet,
     Text,
     TextInput,
     TouchableOpacity,
-    StyleSheet,
+    View,
 } from 'react-native';
 
-import { useState } from "react";
-
+import { supabase } from '@/lib/supabase';
+import { useLocalSearchParams } from 'expo-router';
+import { useEffect, useState } from "react";
 import Toast from 'react-native-toast-message';
-
-import { supabase } from '@/lib/supabase'
+import { useIsFocused } from "@react-navigation/native";
 
 // Estamos aqui
-import { router } from 'expo-router';
 //router.replace('/home');
 
 export default function Alterar() {
@@ -22,24 +21,43 @@ export default function Alterar() {
     const [idade, setIdade] = useState("");
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
+    
+    const {id} = useLocalSearchParams();
+
+    const isFocused = useIsFocused();
+    
+    useEffect(() =>{
+        if(isFocused){
+            consultarAluno();
+        }
+    },[isFocused]);
 
     async function consultarAluno(){
         const { data, error } = await supabase
             .from('tb_alunos')
-            .select('*')
+            .select('*').eq('id', id).single();
         
-        setNome(data[0].nome);
-        setIdade(data[0].idade);
-        setEmail(data[0].email);
+        if(error){
+            Toast.show({
+                type: 'error',
+                text1: 'Erro!',
+                text2: 'Não foi possível consultar o aluno'
+            })
+        }
+
+        setNome(data.nome ? data.nome : "");
+        setIdade(data.idade ?? "");
+        setEmail(data.email ?? "");
     }
 
-    async function cadastroAluno() {
+    async function alterarAluno() {
         setLoading(true)
         const { data, error } = await supabase
             .from('tb_alunos')
-            .insert([
+            .update([
                 { nome: nome, idade: idade, email:email },
             ])
+            .eq('id', id)
             .select()
         if (error) {
             Toast.show({
@@ -52,7 +70,7 @@ export default function Alterar() {
            Toast.show({
                 type: 'success',
                 text1: 'Sucesso!',
-                text2: 'Alteração Realizada'
+                text2: 'Alteração Realizada com Sucesso'
             })
         }
     }
@@ -77,7 +95,7 @@ export default function Alterar() {
                 value={email}
                 onChangeText={setEmail}
             />
-            <TouchableOpacity style={[styles.button, loading && styles.buttonDisabled]} onPress={cadastroAluno}>
+            <TouchableOpacity style={[styles.button, loading && styles.buttonDisabled]} onPress={alterarAluno}>
                 <Text style={styles.title}>Alterar</Text>
             </TouchableOpacity>
             <Toast />
