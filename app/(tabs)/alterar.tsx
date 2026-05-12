@@ -1,16 +1,7 @@
-import { View, Text, StyleSheet } from "react-native";
-export default function Alterar(){
+import  Alterar  from "@/components/frm-alterar";
+
+export default function Alterar_aluno(){
     return(
-        <View style={styles.container}>
-            <Text>Alterar</Text>
-        </View>
+        <Alterar />
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#fff",
-        color: "#000",
-    }
-})
